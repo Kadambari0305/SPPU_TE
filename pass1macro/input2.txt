@@ -1,0 +1,13 @@
+ DISPLAY_CHAR  MACRO  CHAR
+                           PUSH  AX
+                           PUSH  DX
+                           MOV  AH , 02H
+                           MOV  DL ,  CHAR
+                           INT  21H
+                           POP  DX
+                           POP  AX
+ENDM
+CRLF  MACRO
+                      DIPLAY_CHAR  0DH
+                      DISPLAY_CHAR  0AH
+ENDM 

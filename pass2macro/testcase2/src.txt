@@ -1,0 +1,5 @@
+PUSH AX
+CRLF
+MOV BX, 05H
+END
+
