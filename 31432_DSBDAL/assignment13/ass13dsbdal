@@ -1,0 +1,25 @@
+ict@pict-OptiPlex-3046:~$ gedit QuickSort.scala
+pict@pict-OptiPlex-3046:~$ gedit BubbleSort.scala
+pict@pict-OptiPlex-3046:~$ gedit Factorial.scala
+pict@pict-OptiPlex-3046:~$ scalac QuickSort.scala
+scalac BubbleSort.scala
+scalac Factorial.scala
+pict@pict-OptiPlex-3046:~$ scala QuickSort
+scala BubbleSort
+scala Factorial
+Quick Sort Output:
+1
+2
+5
+6
+9
+Bubble Sort Output:
+1
+2
+3
+5
+8
+Factorial of 5 is: 120
+pict@pict-OptiPlex-3046:~$ 
+
+
