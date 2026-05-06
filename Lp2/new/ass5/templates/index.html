@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>City Hospital</title>
+    <style>
+        body { margin:0; font-family: Arial; background:#eef; }
+        header { 
+            background: linear-gradient(rgba(13,110,253,0.7), rgba(13,110,253,0.7)), 
+                        url('cityimg.jpg'); 
+            color:white; padding:20px; text-align:center; 
+            background-size:cover; background-position:center;
+        }
+        nav { background:#333; padding:10px; text-align:center; }
+        nav a { color:white; margin:15px; text-decoration:none; }
+
+        .hero { background:#f4f4f4; padding:60px; text-align:center; }
+        .section { padding:40px; text-align:center; }
+
+        .chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        /* Service cards */
+        .cards { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+        .card { background:white; width:250px; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); transition:0.3s; }
+        .card:hover { transform:scale(1.05); }
+        .card h3 { color:#0d6efd; }
+
+        /* Chatbox popup */
+        #chatContainer {
+            display:none;
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            max-width: 90%;
+            border:1px solid #ccc;
+            border-radius:10px;
+            background:white;
+            box-shadow:0 4px 8px rgba(0,0,0,0.2);
+            z-index: 9999;
+        }
+        #chatHeader {
+            background:#0d6efd;
+            color:white;
+            padding:10px;
+            border-top-left-radius:10px;
+            border-top-right-radius:10px;
+            cursor:pointer;
+        }
+        #chatMessages {
+            height:250px;
+            overflow-y:auto;
+            padding:10px;
+        }
+        #chatInput { width:65%; padding:5px; }
+        #sendBtn { padding:5px 10px; }
+        .quick-menu { margin-top:10px; text-align:center; }
+        .quick-menu button {
+            margin:3px;
+            padding:5px 10px;
+            background:#0d6efd;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>City Hospital</h1>
+    <p>24/7 Emergency | Expert Doctors</p>
+</header>
+
+<nav>
+    <a href="#">Home</a>
+    <a href="#">Doctors</a>
+    <a href="#">Services</a>
+    <a href="#">Contact</a>
+    <a href="#">Book appointment</a>
+</nav>
+
+<div class="hero">
+    <h2>Your Health, Our Priority</h2>
+    <p>Advanced care with modern technology</p>
+</div>
+
+<div class="section">
+    <h2>Our Services</h2>
+    <div class="cards">
+        <div class="card">
+            <h3>🧪 Lab Tests</h3>
+            <p>Advanced diagnostic services including blood tests, MRI, CT scan with fast reports.</p>
+        </div>
+        <div class="card">
+            <h3>🏥 ICU Care</h3>
+            <p>24/7 intensive care unit with modern equipment and experienced medical staff.</p>
+        </div>
+        <div class="card">
+            <h3>💊 Pharmacy</h3>
+            <p>In-house pharmacy with all essential medicines available round the clock.</p>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Contact</h2>
+    <p>📞 9876543210 | 📍 Pune</p>
+</div>
+
+<!-- Chat button -->
+<button class="chat-btn" onclick="toggleChat()">💬</button>
+
+<!-- Chatbox container -->
+<div id="chatContainer">
+    <div id="chatHeader">
+        💬 Chat with us
+        <span style="float:right; cursor:pointer;" onclick="toggleChat()">✖</span>
+    </div>
+    <div id="chatMessages"></div>
+
+    <div style="padding:10px; border-top:1px solid #ccc;">
+        <input type="text" id="chatInput" placeholder="Ask something...">
+        <button id="sendBtn" onclick="sendChat()">Send</button>
+    </div>
+
+    <div class="quick-menu">
+        <button onclick="quick('appointment')">Appointment</button>
+        <button onclick="quick('doctor')">Doctors</button>
+        <button onclick="quick('emergency')">Emergency</button>
+    </div>
+</div>
+
+<script>
+const greetingMessage = "Hello! How can I help you today?";
+
+function toggleChat(){
+    let chat = document.getElementById("chatContainer");
+    let messages = document.getElementById("chatMessages");
+
+    if(chat.style.display === "none") {
+        chat.style.display = "block";
+
+        // Send greeting if chat is empty
+        if(messages.innerHTML.trim() === "") {
+            messages.innerHTML += `<p><b>Bot:</b> ${greetingMessage}</p>`;
+            messages.scrollTop = messages.scrollHeight;
+        }
+    } else {
+        chat.style.display = "none";
+    }
+}
+
+// Send chat message to Flask backend
+function sendChat(){
+    let input = document.getElementById("chatInput").value;
+    if(!input) return;
+
+    let messages = document.getElementById("chatMessages");
+    messages.innerHTML += `<p><b>You:</b> ${input}</p>`;
+
+    fetch("/chat", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({message: input})
+    })
+    .then(res => res.json())
+    .then(data => {
+        messages.innerHTML += `<p><b>Bot:</b> ${data.reply}</p>`;
+        messages.scrollTop = messages.scrollHeight;
+    });
+
+    document.getElementById("chatInput").value = "";
+}
+
+// Quick menu buttons
+function quick(text){
+    document.getElementById("chatInput").value = text;
+    sendChat();
+}
+
+// Send message when Enter key is pressed
+document.getElementById("chatInput").addEventListener("keydown", function(event) {
+    if(event.key === "Enter") {
+        event.preventDefault();
+        sendChat();
+    }
+});
+</script>
+
+</body>
+</html>

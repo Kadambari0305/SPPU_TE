@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Chatbot</title>
+    <style>
+        body { font-family: Arial; background:#eef; text-align:center; }
+
+        #chatbox {
+            width: 420px;
+            height: 420px;
+            margin: auto;
+            border: 1px solid gray;
+            overflow-y: scroll;
+            padding: 10px;
+            background:white;
+        }
+
+        input { width: 300px; padding:10px; }
+        button { padding:10px; }
+
+        .menu button {
+            margin:5px;
+            background:#0d6efd;
+            color:white;
+            border:none;
+        }
+    </style>
+</head>
+<body>
+
+<h2> Hospital Chatbot</h2>
+
+<div id="chatbox"></div>
+
+<input type="text" id="msg">
+<button onclick="send()">Send</button>
+
+<div class="menu">
+    <h3>Quick Menu</h3>
+    <button onclick="quick('appointment')">1. Appointment</button>
+    <button onclick="quick('doctor')">2. Doctors</button>
+    <button onclick="quick('emergency')">3. Emergency</button>
+</div>
+
+<script>
+function send(){
+    let msg = document.getElementById("msg").value;
+
+    document.getElementById("chatbox").innerHTML += "<p><b>You:</b> "+msg+"</p>";
+
+    fetch("/chat", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({message:msg})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> "+data.reply+"</p>";
+    });
+
+    document.getElementById("msg").value="";
+}
+
+function quick(text){
+    document.getElementById("msg").value=text;
+    send();
+}
+</script>
+
+</body>
+</html>
